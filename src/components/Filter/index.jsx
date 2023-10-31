@@ -32,15 +32,19 @@ const StyledButton = withStyles({
   },
 })(Button);
 
-const Filter = () => {
+const Filter = ({ searchTerm, setSearchTerm, filterHeroes }) => {
   return (
     <FilterContainer>
       <StyledTextField
         label="Digite aqui o nome do herói"
         variant="outlined"
         fullWidth
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <StyledButton variant="contained">Buscar</StyledButton>
+      <StyledButton variant="contained" onClick={filterHeroes}>
+        Buscar
+      </StyledButton>
     </FilterContainer>
   );
 };

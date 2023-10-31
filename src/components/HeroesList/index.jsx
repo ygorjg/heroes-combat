@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useHeroContext } from "@/contexts/HeroContext";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
@@ -9,6 +9,7 @@ import CardMedia from "@mui/material/CardMedia";
 import Paper from "@mui/material/Paper";
 import CombatResultModal from "../CombatResultModal";
 import styled from "styled-components";
+import Filter from "../Filter";
 
 const ListContainer = styled(Paper)`
   padding: 20px;
@@ -60,7 +61,7 @@ const PowerStatsTypography = styled(Typography)`
 const HeroesList = () => {
   const {
     fetchHeroes,
-    filteredHeroes,
+    heroes,
     error,
     isModalOpen,
     handleCloseModal,
@@ -68,68 +69,86 @@ const HeroesList = () => {
     powerstatsComparison,
     selectedHeroes,
     handleHeroSelection,
+    filteredHeroes,
+    setFilteredHeroes,
   } = useHeroContext();
+
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filterHeroes = () => {
+    const filteredHeroes = heroes.filter((hero) =>
+      hero.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredHeroes(filteredHeroes);
+  };
 
   useEffect(() => {
     fetchHeroes();
-  }, [fetchHeroes]);
+  }, []);
 
   return (
-    <ListContainer elevation={3}>
-      <Typography variant="h5" component="div">
-        Selecione dois heróis para o combate
-      </Typography>
-      {error ? (
-        <Typography variant="body1" component="div">
-          Erro ao buscar heróis: {error}
-        </Typography>
-      ) : (
-        <CardContainer>
-          {filteredHeroes.map((hero) => (
-            <CardItem key={hero.id}>
-              <StyledCard
-                onClick={() => handleHeroSelection(hero)}
-                isSelected={selectedHeroes.includes(hero)}
-              >
-                <CardMedia
-                  component="img"
-                  alt={hero.name}
-                  height="140"
-                  image={hero.images.sm}
-                />
-                <CardContent>
-                  <Typography variant="h6">{hero.name}</Typography>
-                  <PowerStatsTypography variant="body2">
-                    Combat: {hero.powerstats.combat}
-                  </PowerStatsTypography>
-                  <PowerStatsTypography variant="body2">
-                    Durability: {hero.powerstats.durability}
-                  </PowerStatsTypography>
-                  <PowerStatsTypography variant="body2">
-                    Intelligence: {hero.powerstats.intelligence}
-                  </PowerStatsTypography>
-                  <PowerStatsTypography variant="body2">
-                    Power: {hero.powerstats.power}
-                  </PowerStatsTypography>
-                  <PowerStatsTypography variant="body2">
-                    Speed: {hero.powerstats.speed}
-                  </PowerStatsTypography>
-                  <PowerStatsTypography variant="body2">
-                    Strength: {hero.powerstats.strength}
-                  </PowerStatsTypography>
-                </CardContent>
-              </StyledCard>
-            </CardItem>
-          ))}
-        </CardContainer>
-      )}
-      <CombatResultModal
-        open={isModalOpen}
-        onClose={handleCloseModal}
-        winner={combatResult}
-        powerstatsComparison={powerstatsComparison}
+    <>
+      <Filter
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        filterHeroes={filterHeroes}
       />
-    </ListContainer>
+      <ListContainer elevation={3}>
+        <Typography variant="h5" component="div">
+          Selecione dois heróis para o combate
+        </Typography>
+        {error ? (
+          <Typography variant="body1" component="div">
+            Erro ao buscar heróis: {error}
+          </Typography>
+        ) : (
+          <CardContainer>
+            {filteredHeroes.map((hero) => (
+              <CardItem key={hero.id}>
+                <StyledCard
+                  onClick={() => handleHeroSelection(hero)}
+                  isSelected={selectedHeroes.includes(hero)}
+                >
+                  <CardMedia
+                    component="img"
+                    alt={hero.name}
+                    height="140"
+                    image={hero.images.sm}
+                  />
+                  <CardContent>
+                    <Typography variant="h6">{hero.name}</Typography>
+                    <PowerStatsTypography variant="body2">
+                      Combat: {hero.powerstats.combat}
+                    </PowerStatsTypography>
+                    <PowerStatsTypography variant="body2">
+                      Durability: {hero.powerstats.durability}
+                    </PowerStatsTypography>
+                    <PowerStatsTypography variant="body2">
+                      Intelligence: {hero.powerstats.intelligence}
+                    </PowerStatsTypography>
+                    <PowerStatsTypography variant="body2">
+                      Power: {hero.powerstats.power}
+                    </PowerStatsTypography>
+                    <PowerStatsTypography variant="body2">
+                      Speed: {hero.powerstats.speed}
+                    </PowerStatsTypography>
+                    <PowerStatsTypography variant="body2">
+                      Strength: {hero.powerstats.strength}
+                    </PowerStatsTypography>
+                  </CardContent>
+                </StyledCard>
+              </CardItem>
+            ))}
+          </CardContainer>
+        )}
+        <CombatResultModal
+          open={isModalOpen}
+          onClose={handleCloseModal}
+          winner={combatResult}
+          powerstatsComparison={powerstatsComparison}
+        />
+      </ListContainer>
+    </>
   );
 };
 

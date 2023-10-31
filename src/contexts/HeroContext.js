@@ -93,6 +93,7 @@ export const HeroProvider = ({ children }) => {
 
   const contextValue = {
     heroes,
+    setFilteredHeroes,
     filteredHeroes,
     combatResult,
     error,
